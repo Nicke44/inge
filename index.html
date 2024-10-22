@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Container Filler</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-container {
+            margin: 20px;
+        }
+        .container-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .container {
+            width: 50px;
+            height: 200px;
+            border: 2px solid black;
+            position: relative;
+            box-sizing: border-box;
+        }
+        .fill {
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            background-color: dodgerblue;
+            transition: height 0.5s;
+        }
+        .division-line {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background-color: darkgray;
+            left: 0;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <label for="numContainers">Number of Containers:</label>
+        <input type="number" id="numContainers" min="1">
+
+        <label for="numObjects">Number of Objects:</label>
+        <input type="number" id="numObjects" min="0">
+
+        <label for="capacity">Capacity per Container:</label>
+        <input type="number" id="capacity" min="1">
+
+        <button onclick="drawContainers()">Draw Containers</button>
+    </div>
+
+    <div class="container-wrapper" id="containerWrapper"></div>
+
+    <script>
+        function drawContainers() {
+            const containerWrapper = document.getElementById('containerWrapper');
+            containerWrapper.innerHTML = '';
+
+            const numContainers = parseInt(document.getElementById('numContainers').value);
+            const numObjects = parseInt(document.getElementById('numObjects').value);
+            const capacity = parseInt(document.getElementById('capacity').value);
+
+            if (isNaN(numContainers) || isNaN(numObjects) || isNaN(capacity) || numContainers <= 0 || capacity <= 0) {
+                alert('Please enter valid numbers for all fields.');
+                return;
+            }
+
+            let remainingObjects = numObjects;
+
+            for (let i = 0; i < numContainers; i++) {
+                const containerDiv = document.createElement('div');
+                containerDiv.classList.add('container');
+
+                const fillDiv = document.createElement('div');
+                fillDiv.classList.add('fill');
+
+                let currentFill = Math.min(remainingObjects, capacity);
+                let fillHeightPercentage = (currentFill / capacity) * 100;
+
+                fillDiv.style.height = fillHeightPercentage + '%';
+
+                for (let j = 1; j < capacity; j++) {
+                    const divisionLine = document.createElement('div');
+                    divisionLine.classList.add('division-line');
+                    divisionLine.style.bottom = `${(j / capacity) * 100}%`;
+                    containerDiv.appendChild(divisionLine);
+                }
+
+                containerDiv.appendChild(fillDiv);
+                containerWrapper.appendChild(containerDiv);
+
+                remainingObjects -= currentFill;
+            }
+        }
+    </script>
+</body>
+</html>
